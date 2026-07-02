@@ -1,0 +1,60 @@
+﻿@model IEnumerable<ABC_ECOMMERCE_POE.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1 class="mb-4">Orders</h1>
+
+<table class="table table-bordered table-striped align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderId</td>
+                <td>@item.User?.Email</td>
+                <td>@item.OrderDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form asp-action="ChangeStatus" method="post" style="display:inline;">
+                            <input type="hidden" name="orderId" value="@item.OrderId" />
+                            <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                <option value="pending" selected="@("pending" == item.Status)">Pending</option>
+                                <option value="processed" selected="@("processed" == item.Status)">Processed</option>
+                                <option value="shipped" selected="@("shipped" == item.Status)">Shipped</option>
+                                <option value="delivered" selected="@("delivered" == item.Status)">Delivered</option>
+                            </select>
+                        </form>
+                    }
+                    else
+                    {
+                        @item.Status
+                    }
+                </td>
+                <td>R @item.TotalAmount</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-danger btn-sm">Delete</a>
+                    }
+                    else if (User.IsInRole("Customer"))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-info btn-sm">View Details</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

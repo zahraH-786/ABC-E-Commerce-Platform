@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ABC_ECOMMERCE_POE.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success">Create New Product</a>
+    </p>
+}
+
+<table class="table table-bordered table-striped align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>R @item.Price.ToString("0.00")</td>
+                <td>@item.Description</td>
+                <td>
+                    <img src="@item.ImageUrl" alt="@item.Name" width="80" height="80" style="border-radius:10px;" />
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.ProductId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ProductId" class="btn btn-danger btn-sm">Delete</a>
+                    }
+                    else if (User.IsInRole("Customer"))
+                    {
+                        <a asp-controller="CartItems" asp-action="AddToCart" asp-route-productId="@item.ProductId" class="btn btn-primary btn-sm">Add to Cart</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

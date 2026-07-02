@@ -1,0 +1,48 @@
+﻿@model IEnumerable<ABC_ECOMMERCE_POE.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Customer Carts";
+}
+
+<h1 class="mb-4">Customer Carts</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No active carts found. Customers may have already checked out.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cart?.User?.Email</td>
+                    <td>@item.Product?.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@("R " + item.Product.Price.ToString("0.00"))</td>
+                    <td>@("R " + (item.Product.Price * item.Quantity).ToString("0.00"))</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+        <strong>
+            Total of All Carts:
+            R @Model.Sum(ci => ci.Quantity * (ci.Product?.Price ?? 0)).ToString("0.00")
+        </strong>
+    </div>
+}
